@@ -3,17 +3,26 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/MW-7892/mini-grader-be/database"
 	"github.com/MW-7892/mini-grader-be/graph"
+	"github.com/MW-7892/mini-grader-be/utils"
 )
 
 const defaultPort = "8080"
 
+
 func main() {
-	port := os.Getenv("PORT")
+  // Init database
+  err := database.ConnectToMySql()
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  // GraphQL
+	port := utils.GetEnvVar("PORT")
 	if port == "" {
 		port = defaultPort
 	}

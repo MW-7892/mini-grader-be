@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/MW-7892/mini-grader-be/graph/model"
+	model "github.com/MW-7892/mini-grader-be/graph/gql_model"
 )
 
 // CreateTodo is the resolver for the createTodo field.
