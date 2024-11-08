@@ -19,7 +19,7 @@ func main() {
   // Init database
   err := database.ConnectToMySql()
   if err != nil {
-    log.Fatal(err)
+    panic(err)
   }
 
   // GraphQL
