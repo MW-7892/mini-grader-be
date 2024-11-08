@@ -2,8 +2,7 @@
 This one is for practicing Go. The structure will mainly be golang, GQL, and MySQL
 
 ## ✅ Dependencies
-* [**goose**](https://github.com/pressly/goose/tree/master) for migration. For arch users, you can install `goose` from AUR.
-* **make** for some migration commands. No need to install if you want to type the DB string manually 🙃
+* (Optional) [**goose**](https://github.com/pressly/goose/tree/master) for creating migration. For arch users, you can install `goose` from AUR.
 
 ## 📂 Structure
 * `internal`: Main infrastructure of the backend
@@ -17,13 +16,13 @@ This one is for practicing Go. The structure will mainly be golang, GQL, and MyS
 ## ⏩ Migrations
 * In the topmost level of this repo, you can run the following command to migrate the database.
 ```
-make migrate_up
+<project_root_dir>/scripts/migrateUp.sh
 ```
-* And this is for reroll-ing the migration by one step. Other than that you probably need to write the command manually (managed by goose).
+* And this is for reroll-ing the migration by one step.
 ```
-make migrate_down
+<project_root_dir>/scripts/migrateDown.sh
 ```
 * To create migration, use this command. Note the the `-dir` should points to the migrations folder (or things can get messy).
 ```
-goose -dir database/migrations create <migration_name> sql
+<project_root_dir>/scripts/createMigration.sh <migration_name>
 ```
