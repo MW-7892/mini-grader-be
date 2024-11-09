@@ -2,7 +2,7 @@
 This one is for practicing Go. The structure will mainly be golang, GQL, and MySQL
 
 ## ✅ Dependencies
-* (Optional) [**goose**](https://github.com/pressly/goose/tree/master) for creating migration. For arch users, you can install `goose` from AUR.
+* **make** for migration purpose
 
 ## 📂 Structure
 * `internal`: Main infrastructure of the backend
@@ -14,15 +14,21 @@ This one is for practicing Go. The structure will mainly be golang, GQL, and MyS
 * `utils`: Other utility functions that is common to the entire backend.
 
 ## ⏩ Migrations
+* When you first use this project, or when you want to migrate after adding a new migration, make sure to run this command first
+```
+make migrator
+```
+It will create a binary in `scripts/migrator`. Use that to call for database migration
+
 * In the topmost level of this repo, you can run the following command to migrate the database.
 ```
-<project_root_dir>/scripts/migrateUp.sh
+scripts/migrator up
 ```
 * And this is for reroll-ing the migration by one step.
 ```
-<project_root_dir>/scripts/migrateDown.sh
+scripts/migrator down
 ```
 * To create migration, use this command. Note the the `-dir` should points to the migrations folder (or things can get messy).
 ```
-<project_root_dir>/scripts/createMigration.sh <migration_name>
+scripts/migrator create <migration_name>
 ```

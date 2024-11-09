@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/MW-7892/mini-grader-be/utils"
 	"gorm.io/driver/mysql"
@@ -13,12 +14,18 @@ var SqlDB *sql.DB
 var Migrator gorm.Migrator
 
 func ConnectToMySql() (error) {
-  database_string := utils.GetEnvVar("DB_USER") + ":" +
-    utils.GetEnvVar("DB_PASSWORD") + "@tcp(" + 
-    utils.GetEnvVar("DB_HOST") + ":" +
-    utils.GetEnvVar("DB_PORT") + ")/" +
-    utils.GetEnvVar("DB_NAME") +
-    "?charset=utf8&parseTime=True&loc=Local"
+  var (
+    user      = utils.GetEnvVar("DB_USER")
+    password  = utils.GetEnvVar("DB_PASSWORD")
+    host      = utils.GetEnvVar("DB_HOST")
+    port      = utils.GetEnvVar("DB_PORT")
+    name      = utils.GetEnvVar("DB_NAME")
+  )
+
+  database_string := fmt.Sprintf(
+    "%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+    user, password, host, port, name,
+  )
 
   db, err := gorm.Open(mysql.New(mysql.Config{
     DSN: database_string,
