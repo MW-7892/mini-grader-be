@@ -6,35 +6,35 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/MW-7892/mini-grader-be/graph/generated"
 	gql "github.com/MW-7892/mini-grader-be/graph/models"
+	"github.com/MW-7892/mini-grader-be/internal/services"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input gql.CreateUserInput) (*gql.User, error) {
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+	return services.CreateUser(ctx, input)
 }
 
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, input *gql.UpdateUserInput) (*gql.User, error) {
-	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+	return services.UpdateUser(ctx, input)
 }
 
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*gql.User, error) {
-	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
+	return services.DeleteUser(ctx, id)
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*gql.User, error) {
-	panic(fmt.Errorf("not implemented: Users - users"))
+	return services.QueryUsers(ctx)
 }
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*gql.User, error) {
-	panic(fmt.Errorf("not implemented: User - user"))
+	return services.QueryUser(ctx, id)
 }
 
 // Mutation returns generated.MutationResolver implementation.
