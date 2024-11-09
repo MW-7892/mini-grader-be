@@ -25,6 +25,7 @@ func CreateUser(args CreateUserArgs) (*User, error) {
   user := User{
     Name: args.Name,
     Email: args.Email,
+    Password: args.Password,
     Role: args.Role,
   }
   err := database.DB.Create(&user).Error
@@ -43,7 +44,13 @@ type UpdateUserArgs struct {
 }
 
 func UpdateUser(args UpdateUserArgs) (*User, error) {
-  user := User{ ID: args.ID }
+  user := User{ 
+    ID: args.ID,
+    Name: *args.Name,
+    Email: *args.Email,
+    Password: *args.Password,
+    Role: *args.Role,
+  }
   err := database.DB.Save(&user).Error
   if err != nil {
     return nil, err
