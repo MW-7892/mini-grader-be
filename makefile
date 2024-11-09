@@ -1,4 +1,4 @@
 #!make
 
 migrator:
-	go build -o scripts/migrator ./scripts/goose/main.go
+	go build -o migrator ./scripts/goose/main.go

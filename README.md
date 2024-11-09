@@ -18,17 +18,17 @@ This one is for practicing Go. The structure will mainly be golang, GQL, and MyS
 ```
 make migrator
 ```
-It will create a binary in `scripts/migrator`. Use that to call for database migration
+It will create a binary in `<project_root>/migrator`. Use that to call for database migration
 
-* In the topmost level of this repo, you can run the following command to migrate the database.
+* (Suppose you are in the project root dir) In the topmost level of this repo, you can run the following command to migrate the database.
 ```
-scripts/migrator up
+./migrator up
 ```
 * And this is for reroll-ing the migration by one step.
 ```
-scripts/migrator down
+./migrator down
 ```
 * To create migration, use this command. Note the the `-dir` should points to the migrations folder (or things can get messy).
 ```
-scripts/migrator create <migration_name>
+./migrator create <migration_name>
 ```
