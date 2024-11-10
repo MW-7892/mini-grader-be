@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"log"
 	"net/http"
 
 	gql "github.com/MW-7892/mini-grader-be/graph/models"
@@ -41,7 +40,6 @@ func Middleware() func(http.Handler) http.Handler {
       username, err := services.ParseToken(token_string)
       if err != nil {
         http.Error(writer, "Invalid token", http.StatusForbidden)
-        log.Fatal(err)
         return
       }
 

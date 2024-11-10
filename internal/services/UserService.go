@@ -68,6 +68,12 @@ func QueryUserIDByName(username string) (string, error) {
 }
 
 func QueryUsers(ctx context.Context) ([]*gql.User, error) {
+  // NEED TO REFACTOR THE STRUCTURE BEFORE I CAN USE THIS
+  // user := auth.ForContext(ctx)
+  // if user == nil {
+  //     return []*gql.User{}, fmt.Errorf("access denied")
+  // }
+
   users, err := models.QueryUsers()
   users_gql := []*gql.User{}
 
