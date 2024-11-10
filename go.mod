@@ -4,9 +4,12 @@ go 1.23.2
 
 require (
 	github.com/99designs/gqlgen v0.17.55
+	github.com/go-chi/chi v1.5.5
+	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pressly/goose/v3 v3.22.1
 	github.com/vektah/gqlparser/v2 v2.5.17
+	golang.org/x/crypto v0.27.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
 )

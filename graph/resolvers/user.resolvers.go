@@ -27,6 +27,16 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*gql.User
 	return services.DeleteUser(ctx, id)
 }
 
+// Login is the resolver for the login field.
+func (r *mutationResolver) Login(ctx context.Context, username string, password string) (string, error) {
+	return services.LoginService(ctx, username, password)
+}
+
+// RefreshToken is the resolver for the refreshToken field.
+func (r *mutationResolver) RefreshToken(ctx context.Context, token string) (string, error) {
+  return services.RegenerateToken(ctx, token)
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*gql.User, error) {
 	return services.QueryUsers(ctx)

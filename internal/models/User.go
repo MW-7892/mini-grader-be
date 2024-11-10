@@ -78,6 +78,15 @@ func QueryUser(id uint) (*User, error) {
   return &user, nil
 }
 
+func QueryUserByName(username string) (*User, error) {
+  var user User
+  err := database.DB.Where("name = ?", username).First(&user).Error
+  if err != nil {
+    return nil, err
+  }
+  return &user, nil
+}
+
 func QueryUsers() (*[]User, error) {
   var users []User
   err := database.DB.Find(&users).Error

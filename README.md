@@ -5,6 +5,7 @@ This one is for practicing Go. The structure will mainly be golang, GQL, and MyS
 * **go** obviously
 * **MySQL** or **MariaDB** for the database
 * **make** for migration purpose
+* [**air**](https://github.com/air-verse/air) for live update on backend. You can use the [shell script installation](https://github.com/air-verse/air?tab=readme-ov-file#via-installsh) to make a binary in this project root (don't forget `air init`).
 
 ## 🖥️ Running the Project
 * Migrate the database

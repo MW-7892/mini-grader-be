@@ -26,3 +26,10 @@ go.work.sum
 
 # Migrator binary
 migrator
+
+# Temporary dir
+tmp
+
+# air binary for development
+air
+.air.toml
