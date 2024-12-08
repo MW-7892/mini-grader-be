@@ -56,6 +56,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Me    func(childComplexity int) int
 		User  func(childComplexity int, id string) int
 		Users func(childComplexity int) int
 	}
@@ -78,6 +79,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*gql.User, error)
 	User(ctx context.Context, id string) (*gql.User, error)
+	Me(ctx context.Context) (*gql.User, error)
 }
 
 type executableSchema struct {
@@ -158,6 +160,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["input"].(*gql.UpdateUserInput)), true
+
+	case "Query.me":
+		if e.complexity.Query.Me == nil {
+			break
+		}
+
+		return e.complexity.Query.Me(childComplexity), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -325,16 +334,17 @@ var sources = []*ast.Source{
 
 type Query {
   users: [User]! @authorized
-  user(id: ID!): User
+  user(id: ID!): User @authorized
+  me: User @authorized
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): User! 
-  updateUser(input: UpdateUserInput): User!
-  deleteUser(id: ID!): User!
+  createUser(input: CreateUserInput!): User! @authorized
+  updateUser(input: UpdateUserInput): User! @authorized
+  deleteUser(id: ID!): User! @authorized
 
   login(username: String!, password: String!): String! 
-  refreshToken(token: String!): String!
+  refreshToken(token: String!): String! @authorized
 }
 
 input CreateUserInput {
@@ -605,8 +615,30 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(gql.CreateUserInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(gql.CreateUserInput))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				var zeroVal *gql.User
+				return zeroVal, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gql.User); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/MW-7892/mini-grader-be/graph/model.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -670,8 +702,30 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["input"].(*gql.UpdateUserInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["input"].(*gql.UpdateUserInput))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				var zeroVal *gql.User
+				return zeroVal, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gql.User); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/MW-7892/mini-grader-be/graph/model.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -735,8 +789,30 @@ func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["id"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				var zeroVal *gql.User
+				return zeroVal, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gql.User); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/MW-7892/mini-grader-be/graph/model.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -855,8 +931,30 @@ func (ec *executionContext) _Mutation_refreshToken(ctx context.Context, field gr
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RefreshToken(rctx, fc.Args["token"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().RefreshToken(rctx, fc.Args["token"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				var zeroVal string
+				return zeroVal, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -986,8 +1084,30 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().User(rctx, fc.Args["id"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().User(rctx, fc.Args["id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				var zeroVal *gql.User
+				return zeroVal, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gql.User); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/MW-7892/mini-grader-be/graph/model.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1031,6 +1151,79 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 	if fc.Args, err = ec.field_Query_user_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_me(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_me(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().Me(rctx)
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				var zeroVal *gql.User
+				return zeroVal, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gql.User); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/MW-7892/mini-grader-be/graph/model.User`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gql.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -3352,6 +3545,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_user(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "me":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_me(ctx, field)
 				return res
 			}
 

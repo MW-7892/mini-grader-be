@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/MW-7892/mini-grader-be/graph/generated"
+	"github.com/MW-7892/mini-grader-be/graph/middleware"
 	gql "github.com/MW-7892/mini-grader-be/graph/model"
 	"github.com/MW-7892/mini-grader-be/internal/auth"
 	"github.com/MW-7892/mini-grader-be/internal/service"
@@ -46,6 +47,12 @@ func (r *queryResolver) Users(ctx context.Context) ([]*gql.User, error) {
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*gql.User, error) {
 	return service.QueryUser(ctx, id)
+}
+
+// Me is the resolver for the me field.
+func (r *queryResolver) Me(ctx context.Context) (*gql.User, error) {
+  user := middleware.ForContext(ctx)
+	return service.QueryUser(ctx, user.ID)
 }
 
 // Mutation returns generated.MutationResolver implementation.
