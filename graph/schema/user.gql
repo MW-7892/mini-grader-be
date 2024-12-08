@@ -6,17 +6,17 @@ type User {
 }
 
 type Query {
-  users: [User]!
-  user(id: ID!): User
+  users: [User]! @authorized
+  user(id: ID!): User @authorized
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): User! 
-  updateUser(input: UpdateUserInput): User!
-  deleteUser(id: ID!): User!
+  createUser(input: CreateUserInput!): User! @authorized
+  updateUser(input: UpdateUserInput): User! @authorized
+  deleteUser(id: ID!): User! @authorized
 
   login(username: String!, password: String!): String! 
-  refreshToken(token: String!): String!
+  refreshToken(token: String!): String! @authorized
 }
 
 input CreateUserInput {

@@ -2,9 +2,7 @@ package service
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/MW-7892/mini-grader-be/graph/middleware"
 	gql "github.com/MW-7892/mini-grader-be/graph/model"
 	"github.com/MW-7892/mini-grader-be/internal/model"
 	"github.com/MW-7892/mini-grader-be/utils"
@@ -65,11 +63,6 @@ func QueryUser(ctx context.Context, id string) (*gql.User, error) {
 }
 
 func QueryUsers(ctx context.Context) ([]*gql.User, error) {
-  user := middleware.ForContext(ctx)
-  if user == nil {
-      return []*gql.User{}, fmt.Errorf("Access Denied")
-  }
-
   users, err := model.QueryUsers()
   users_gql := []*gql.User{}
 

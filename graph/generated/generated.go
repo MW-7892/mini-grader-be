@@ -43,7 +43,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
-	Authenticated func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	Authorized func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -313,7 +313,8 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schema/directives.gql", Input: `directive @authenticated on FIELD_DEFINITION
+	{Name: "../schema/directives.gql", Input: `directive @authorized on FIELD_DEFINITION
+
 `, BuiltIn: false},
 	{Name: "../schema/user.gql", Input: `type User {
   id: ID!
@@ -323,7 +324,7 @@ var sources = []*ast.Source{
 }
 
 type Query {
-  users: [User]!
+  users: [User]! @authorized
   user(id: ID!): User
 }
 
@@ -909,8 +910,30 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Users(rctx)
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().Users(rctx)
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				var zeroVal []*gql.User
+				return zeroVal, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*gql.User); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/MW-7892/mini-grader-be/graph/model.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
