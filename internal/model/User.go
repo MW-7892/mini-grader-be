@@ -1,4 +1,4 @@
-package models
+package model
 
 import (
 	"github.com/MW-7892/mini-grader-be/database"

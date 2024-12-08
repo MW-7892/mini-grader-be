@@ -1,4 +1,4 @@
-package services
+package auth
 
 import (
 	"context"
@@ -6,7 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/MW-7892/mini-grader-be/internal/models"
+	gql "github.com/MW-7892/mini-grader-be/graph/model"
+	"github.com/MW-7892/mini-grader-be/internal/model"
 	"github.com/MW-7892/mini-grader-be/utils"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -29,6 +30,18 @@ func generateAuthToken(username string) (string, error) {
   return token_string, nil
 }
 
+func QueryUserByName(username string) (*gql.User, error) {
+  user, err := model.QueryUserByName(username)
+  if err != nil {
+    return nil, err
+  }
+  return &gql.User{
+    ID: utils.UintToString(user.ID),
+    Name: user.Name,
+    Role: user.Role,
+  }, nil
+}
+
 func ParseToken(token_string string) (string, error) {
   token, err := jwt.Parse(
     token_string,
@@ -46,7 +59,7 @@ func ParseToken(token_string string) (string, error) {
 }
 
 func authenticate(username string, password string) (bool, error) {
-  user, err := models.QueryUserByName(username)
+  user, err := model.QueryUserByName(username)
   if err != nil {
     return false, err
   }

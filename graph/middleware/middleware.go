@@ -1,17 +1,19 @@
-package auth
+package middleware
 
 import (
 	"context"
 	"net/http"
 
-	gql "github.com/MW-7892/mini-grader-be/graph/models"
-	"github.com/MW-7892/mini-grader-be/internal/services"
+	gql "github.com/MW-7892/mini-grader-be/graph/model"
+	"github.com/MW-7892/mini-grader-be/internal/auth"
 )
 
-var user_ctx_key = &context_key{"user"}
-
-type context_key struct {
+type contextKey struct {
   name string
+}
+
+func GetUserContextKey() *contextKey {
+  return &contextKey{"user"}
 }
 
 func Middleware() func(http.Handler) http.Handler {
@@ -37,23 +39,24 @@ func Middleware() func(http.Handler) http.Handler {
       token_string = token_string[len("Bearer "):]
 
       // Validate jwt token
-      username, err := services.ParseToken(token_string)
+      username, err := auth.ParseToken(token_string)
       if err != nil {
         http.Error(writer, "Invalid token", http.StatusForbidden)
         return
       }
 
-      id, err := services.QueryUserIDByName(username)
+      user, err := auth.QueryUserByName(username)
       if err != nil {
         next.ServeHTTP(writer, request)
         return
       }
-      user_ctx := gql.User{
-        ID: id,
+      user_ctx := &gql.User{
+        ID: user.ID,
         Name: username,
+        Role: user.Role,
       }
 
-      ctx := context.WithValue(request.Context(), user_ctx_key, user_ctx)
+      ctx := context.WithValue(request.Context(), GetUserContextKey().name, user_ctx)
       request = request.WithContext(ctx)
       next.ServeHTTP(writer, request)
     })
@@ -61,6 +64,6 @@ func Middleware() func(http.Handler) http.Handler {
 }
 
 func ForContext(ctx context.Context) *gql.User {
-    raw, _ := ctx.Value(user_ctx_key).(*gql.User)
-    return raw
+  raw, _ := ctx.Value(GetUserContextKey().name).(*gql.User)
+  return raw
 }

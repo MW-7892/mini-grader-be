@@ -1,14 +1,16 @@
-package services
+package service
 
 import (
 	"context"
+	"fmt"
 
-	gql "github.com/MW-7892/mini-grader-be/graph/models"
-	"github.com/MW-7892/mini-grader-be/internal/models"
+	"github.com/MW-7892/mini-grader-be/graph/middleware"
+	gql "github.com/MW-7892/mini-grader-be/graph/model"
+	"github.com/MW-7892/mini-grader-be/internal/model"
 	"github.com/MW-7892/mini-grader-be/utils"
 )
 
-func userModelToGQL(model *models.User) (*gql.User) {
+func userModelToGQL(model *model.User) (*gql.User) {
   gql_model := &gql.User{
     ID: utils.UintToString(model.ID),
     Name: model.Name,
@@ -24,7 +26,7 @@ func CreateUser(ctx context.Context, input gql.CreateUserInput) (*gql.User, erro
     return nil, err
   }
 
-  user, err := models.CreateUser(models.CreateUserArgs{
+  user, err := model.CreateUser(model.CreateUserArgs{
     Name: input.Name,
     Email: input.Email,
     Password: hashed_password,
@@ -43,7 +45,7 @@ func UpdateUser(ctx context.Context, input *gql.UpdateUserInput) (*gql.User, err
     }
   }
 
-  user, err := models.UpdateUser(models.UpdateUserArgs{
+  user, err := model.UpdateUser(model.UpdateUserArgs{
     Name: input.Name,
     Email: input.Email,
     Password: password,
@@ -53,28 +55,22 @@ func UpdateUser(ctx context.Context, input *gql.UpdateUserInput) (*gql.User, err
 }
 
 func DeleteUser(ctx context.Context, id string) (*gql.User, error) {
-  user, err := models.DeleteUser(utils.StringToUint(id))
+  user, err := model.DeleteUser(utils.StringToUint(id))
   return userModelToGQL(user), err
 }
 
 func QueryUser(ctx context.Context, id string) (*gql.User, error) {
-  user, err := models.QueryUser(utils.StringToUint(id))
+  user, err := model.QueryUser(utils.StringToUint(id))
   return userModelToGQL(user), err
 }
 
-func QueryUserIDByName(username string) (string, error) {
-  user, err := models.QueryUserByName(username)
-  return utils.UintToString(user.ID), err
-}
-
 func QueryUsers(ctx context.Context) ([]*gql.User, error) {
-  // NEED TO REFACTOR THE STRUCTURE BEFORE I CAN USE THIS
-  // user := auth.ForContext(ctx)
-  // if user == nil {
-  //     return []*gql.User{}, fmt.Errorf("access denied")
-  // }
+  user := middleware.ForContext(ctx)
+  if user == nil {
+      return []*gql.User{}, fmt.Errorf("Access Denied")
+  }
 
-  users, err := models.QueryUsers()
+  users, err := model.QueryUsers()
   users_gql := []*gql.User{}
 
   for _, user := range *users {

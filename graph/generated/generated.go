@@ -13,7 +13,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	gql "github.com/MW-7892/mini-grader-be/graph/models"
+	gql "github.com/MW-7892/mini-grader-be/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -43,6 +43,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	Authenticated func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -312,6 +313,8 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "../schema/directives.gql", Input: `directive @authenticated on FIELD_DEFINITION
+`, BuiltIn: false},
 	{Name: "../schema/user.gql", Input: `type User {
   id: ID!
   name: String!
@@ -371,7 +374,7 @@ func (ec *executionContext) field_Mutation_createUser_argsInput(
 ) (gql.CreateUserInput, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNCreateUserInput2githubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐCreateUserInput(ctx, tmp)
+		return ec.unmarshalNCreateUserInput2githubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐCreateUserInput(ctx, tmp)
 	}
 
 	var zeroVal gql.CreateUserInput
@@ -481,7 +484,7 @@ func (ec *executionContext) field_Mutation_updateUser_argsInput(
 ) (*gql.UpdateUserInput, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalOUpdateUserInput2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUpdateUserInput(ctx, tmp)
+		return ec.unmarshalOUpdateUserInput2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUpdateUserInput(ctx, tmp)
 	}
 
 	var zeroVal *gql.UpdateUserInput
@@ -616,7 +619,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	}
 	res := resTmp.(*gql.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -681,7 +684,7 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 	}
 	res := resTmp.(*gql.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -746,7 +749,7 @@ func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field grap
 	}
 	res := resTmp.(*gql.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -921,7 +924,7 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*gql.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_users(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -972,7 +975,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(*gql.User)
 	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3761,7 +3764,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐCreateUserInput(ctx context.Context, v interface{}) (gql.CreateUserInput, error) {
+func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (gql.CreateUserInput, error) {
 	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -3796,11 +3799,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v gql.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2githubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v gql.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v []*gql.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v []*gql.User) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3824,7 +3827,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋMWᚑ7892ᚋmini�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx, sel, v[i])
+			ret[i] = ec.marshalOUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3838,7 +3841,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋMWᚑ7892ᚋmini�
 	return ret
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v *gql.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *gql.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4143,7 +4146,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) unmarshalOUpdateUserInput2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUpdateUserInput(ctx context.Context, v interface{}) (*gql.UpdateUserInput, error) {
+func (ec *executionContext) unmarshalOUpdateUserInput2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUpdateUserInput(ctx context.Context, v interface{}) (*gql.UpdateUserInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4151,7 +4154,7 @@ func (ec *executionContext) unmarshalOUpdateUserInput2ᚖgithubᚗcomᚋMWᚑ789
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v *gql.User) graphql.Marshaler {
+func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋMWᚑ7892ᚋminiᚑgraderᚑbeᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *gql.User) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

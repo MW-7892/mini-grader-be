@@ -1,4 +1,4 @@
-package resolvers
+package resolver
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -8,43 +8,44 @@ import (
 	"context"
 
 	"github.com/MW-7892/mini-grader-be/graph/generated"
-	gql "github.com/MW-7892/mini-grader-be/graph/models"
-	"github.com/MW-7892/mini-grader-be/internal/services"
+	gql "github.com/MW-7892/mini-grader-be/graph/model"
+	"github.com/MW-7892/mini-grader-be/internal/auth"
+	"github.com/MW-7892/mini-grader-be/internal/service"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input gql.CreateUserInput) (*gql.User, error) {
-	return services.CreateUser(ctx, input)
+	return service.CreateUser(ctx, input)
 }
 
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, input *gql.UpdateUserInput) (*gql.User, error) {
-	return services.UpdateUser(ctx, input)
+	return service.UpdateUser(ctx, input)
 }
 
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*gql.User, error) {
-	return services.DeleteUser(ctx, id)
+	return service.DeleteUser(ctx, id)
 }
 
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, username string, password string) (string, error) {
-	return services.LoginService(ctx, username, password)
+	return auth.LoginService(ctx, username, password)
 }
 
 // RefreshToken is the resolver for the refreshToken field.
 func (r *mutationResolver) RefreshToken(ctx context.Context, token string) (string, error) {
-  return services.RegenerateToken(ctx, token)
+	return auth.RegenerateToken(ctx, token)
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*gql.User, error) {
-	return services.QueryUsers(ctx)
+	return service.QueryUsers(ctx)
 }
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*gql.User, error) {
-	return services.QueryUser(ctx, id)
+	return service.QueryUser(ctx, id)
 }
 
 // Mutation returns generated.MutationResolver implementation.
