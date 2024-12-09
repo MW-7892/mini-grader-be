@@ -70,11 +70,7 @@ func authenticate(username string, password string) (bool, error) {
 func LoginService(ctx context.Context, username string, password string) (string, error) {
   is_auth, err := authenticate(username, password)
   if !is_auth {
-    if err != nil {
-      return "", err
-    } else {
-      return "", fmt.Errorf("Wrong username or password")
-    }
+    return "", fmt.Errorf("Wrong username or password")
   }
 
   token, err := generateAuthToken(username)

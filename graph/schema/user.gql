@@ -12,7 +12,7 @@ type Query {
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): User! @authorized
+  createUser(input: CreateUserInput!): User!
   updateUser(input: UpdateUserInput): User! @authorized
   deleteUser(id: ID!): User! @authorized
 
