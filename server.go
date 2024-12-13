@@ -13,9 +13,19 @@ import (
 	"github.com/MW-7892/mini-grader-be/graph/resolver"
 	"github.com/MW-7892/mini-grader-be/utils"
 	"github.com/go-chi/chi"
+	"github.com/joho/godotenv"
 )
 
 const defaultPort = "8080"
+
+func init() {
+  err := godotenv.Load(".env")
+
+  if err != nil {
+    log.Print("No .env file found, using system env...")
+  }
+}
+
 
 func main() {
   // Init database
