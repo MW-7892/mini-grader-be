@@ -40,4 +40,4 @@ jobs:
           script: |
             docker pull mw7892/mini-grader-be
             docker stop $(docker ps -q --filter "ancestor=mw7892/mini-grader-be")
-            docker run -d -p 80:3000 mw7892/mini-grader-be
+            docker run -d -p 8000:8000 mw7892/mini-grader-be
