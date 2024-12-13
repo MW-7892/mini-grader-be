@@ -1,4 +1,6 @@
-# ⚙️ Mini Grader Backend
+# ⚙️ Mini Grader Backend (WIP)
+I just wanna use the wiki. Guess the repo will be public now 💀
+
 This one is for practicing Go. The structure will mainly be golang, GQL, and MySQL
 
 ## ✅ Dependencies
