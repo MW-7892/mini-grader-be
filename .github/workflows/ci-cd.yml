@@ -26,18 +26,18 @@ jobs:
       - name: 🌐 Pushing Image to Docker Hub
         run: docker push mw7892/mini-grader-be
 
-    deploy:
-      runs-on: ubuntu-latest
-      needs: build
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
 
-      steps:
-        - name: 🗝️ SSH into EC2 and Deploy
-          uses: appleboy/ssh-action@1.2.0
-          with:
-            host: ${{ secrets.EC2_HOST }}
-            username: ubuntu
-            key: ${{ secrets.EC2_KEY }}
-            script: |
-              docker pull mw7892/mini-grader-be
-              docker stop $(docker ps -q --filter "ancestor=mw7892/mini-grader-be")
-              docker run -d -p 80:3000 mw7892/mini-grader-be
+    steps:
+      - name: 🗝️ SSH into EC2 and Deploy
+        uses: appleboy/ssh-action@1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker pull mw7892/mini-grader-be
+            docker stop $(docker ps -q --filter "ancestor=mw7892/mini-grader-be")
+            docker run -d -p 80:3000 mw7892/mini-grader-be
