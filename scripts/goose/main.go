@@ -11,10 +11,19 @@ import (
 
 	_ "github.com/MW-7892/mini-grader-be/database/migrations"
 	"github.com/MW-7892/mini-grader-be/utils"
+	"github.com/joho/godotenv"
 	"github.com/pressly/goose/v3"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
+
+func init() {
+  err := godotenv.Load(".env")
+
+  if err != nil {
+    log.Print("No .env file found, using system env...")
+  }
+}
 
 var (
 	flags = flag.NewFlagSet("goose", flag.ExitOnError)
