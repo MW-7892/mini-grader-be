@@ -25,8 +25,8 @@ jobs:
 
       - name: 📑 Set up environment variables AWS
         run: |
-          echo "AWS_DEFAULT_REGION=ap-northeast-1" &gt;&gt; $GITHUB_ENV
-          echo "AWS_SG_NAME=mini-grader-sec-group" &gt;&gt; $GITHUB_ENV 
+          echo "AWS_DEFAULT_REGION=ap-northeast-1" >> $GITHUB_ENV
+          echo "AWS_SG_NAME=mini-grader-sec-group" >> $GITHUB_ENV 
 
       - name: 📝 Add GitHub Actions IP to security group
         run: |
