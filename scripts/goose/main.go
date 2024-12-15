@@ -44,6 +44,8 @@ func main() {
     user, password, host, port, name,
   )
 
+  fmt.Println(database_string)
+
   err := flags.Parse(os.Args[1:])
   if err != nil {
     panic(err)
