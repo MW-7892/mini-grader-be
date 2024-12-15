@@ -22,11 +22,6 @@ jobs:
         id: ip
         uses: haythem/public-ip@v1.2
       
-      - name: 🗒️ Create .env file
-        run: |
-          touch .env
-          echo "{{ secrets.DEPLOY_ENV }}" >> .env
-
       - name: 📑 Set up environment variables AWS
         run: |
           echo "AWS_DEFAULT_REGION=ap-northeast-1" >> $GITHUB_ENV
@@ -45,6 +40,12 @@ jobs:
 
       - name: 📦 Migrate database
         run: ./migrator up
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: 3306
+          DB_NAME: minigrader
 
       - name: 👤 Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
