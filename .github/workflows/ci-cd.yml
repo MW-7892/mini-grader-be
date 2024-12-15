@@ -1,4 +1,5 @@
 # https://medium.com/@ashu1230/deploying-a-backend-application-on-aws-ec2-using-ci-cd-with-docker-7fe9be3b08f6
+# https://kamrul.dev/dynamically-add-github-actions-ip-to-aws-security-group/
 name: CI/CD Pipeline
 
 on:
@@ -18,7 +19,22 @@ jobs:
         uses: docker/setup-docker-action@v4
       
       - name: 🗒️ Create .env file
-        run: touch .env && echo "{{ secrets.DEPLOY_ENV }}" .env
+        run: |
+          touch .env
+          echo "{{ secrets.DEPLOY_ENV }}" .env
+
+      - name: 📑 Set up environment variables AWS
+        run: |
+          echo "AWS_DEFAULT_REGION=ap-northeast-1" &gt;&gt; $GITHUB_ENV
+          echo "AWS_SG_NAME=mini-grader-sec-group" &gt;&gt; $GITHUB_ENV 
+
+      - name: 📝 Add GitHub Actions IP to security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
 
       - name: 🪛 Make migrator
         run: make migrator
@@ -34,6 +50,15 @@ jobs:
 
       - name: 🌐 Pushing image to Docker Hub
         run: docker push mw7892/mini-grader-be
+
+      - name: 🧹 Cleanup
+        run: |
+          aws ec2 revoke-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
+        if: always()
 
   deploy:
     runs-on: ubuntu-latest
