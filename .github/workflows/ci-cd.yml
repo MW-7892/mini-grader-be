@@ -78,5 +78,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             docker pull mw7892/mini-grader-be
-            docker stop $(docker ps -q --filter "ancestor=mw7892/mini-grader-be")
-            docker run -d -p 8000:8000 --env-file .env mw7892/mini-grader-be 
+            docker system prune -af
+            docker stop $(docker ps -q --filter "name=backend")
+            docker run -d -p 8000:8000 --env-file .env --name backend mw7892/mini-grader-be 
