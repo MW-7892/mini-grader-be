@@ -23,6 +23,10 @@ jobs:
           touch .env
           echo "{{ secrets.DEPLOY_ENV }}" .env
 
+      - name: 🔐 Get Github action IP
+          id: ip
+          uses: haythem/public-ip@v1.2
+
       - name: 📑 Set up environment variables AWS
         run: |
           echo "AWS_DEFAULT_REGION=ap-northeast-1" >> $GITHUB_ENV
