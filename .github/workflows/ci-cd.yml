@@ -25,7 +25,7 @@ jobs:
       - name: 🗒️ Create .env file
         run: |
           touch .env
-          echo "{{ secrets.DEPLOY_ENV }}" .env
+          echo "{{ secrets.DEPLOY_ENV }}" >> .env
 
       - name: 📑 Set up environment variables AWS
         run: |
