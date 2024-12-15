@@ -17,15 +17,15 @@ jobs:
 
       - name: 📥 Set up Docker
         uses: docker/setup-docker-action@v4
+
+      - name: 🔐 Get Github action IP
+        id: ip
+        uses: haythem/public-ip@v1.2
       
       - name: 🗒️ Create .env file
         run: |
           touch .env
           echo "{{ secrets.DEPLOY_ENV }}" .env
-
-      - name: 🔐 Get Github action IP
-          id: ip
-          uses: haythem/public-ip@v1.2
 
       - name: 📑 Set up environment variables AWS
         run: |
